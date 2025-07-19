@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Design login page",
+    "required_skills": ["React", "UI"],
+    "priority": "high"
+  },
+  {
+    "title": "Write product copy",
+    "required_skills": ["Marketing", "Content"],
+    "priority": "medium"
+  },
+  {
+    "title": "Develop backend for API",
+    "required_skills": ["Python", "Django"],
+    "priority": "high"
+  }
+]

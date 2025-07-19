@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Task Assignment Agent</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 2em;
+    }
+
+    .container {
+      max-width: 600px;
+      background: #ffffff;
+      padding: 2em;
+      margin: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #111827;
+    }
+
+    label {
+      display: block;
+      margin-top: 1em;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 0.3em;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 1em;
+      background-color: #f9fafb;
+    }
+
+    button {
+      padding: 12px 20px;
+      margin-top: 1.5em;
+      margin-right: 0.5em;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1em;
+      cursor: pointer;
+      color: white;
+      transition: background 0.3s ease;
+    }
+
+    button[type="submit"] {
+      background-color: #6366f1;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #4f46e5;
+    }
+
+    button[type="button"] {
+      background-color: #10b981;
+    }
+
+    button[type="button"]:hover {
+      background-color: #059669;
+    }
+
+    #result {
+      margin-top: 2em;
+      background: #ecfdf5;
+      color: #064e3b;
+      padding: 1em;
+      border-left: 5px solid #10b981;
+      border-radius: 8px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Assign a Task</h1>
+    <form id="task-form">
+      <label>Task Title:
+        <input type="text" id="title" required>
+      </label>
+
+      <label>Required Skills (comma-separated):
+        <input type="text" id="skills" required>
+      </label>
+
+      <label>Priority:
+        <select id="priority">
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+      </label>
+
+      <button type="submit">Assign with AI</button>
+      <button type="button" onclick="assignRuleBased()">Assign with Rules</button>
+    </form>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // AI-based assignment
+    document.getElementById('task-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const task = {
+        title: document.getElementById('title').value,
+        skills: document.getElementById('skills').value,
+        priority: document.getElementById('priority').value
+      };
+
+      document.getElementById('result').innerHTML = "⏳ Thinking (AI)...";
+
+      try {
+        const response = await fetch('http://localhost:5000/assign-task', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(task)
+        });
+
+        const result = await response.json();
+        document.getElementById('result').innerHTML = `
+          <strong>AI Recommendation:</strong>
+          <div>${result.recommendation || '⚠️ No recommendation received'}</div>`;
+      } catch (err) {
+        console.error("❌ AI Request failed:", err);
+        document.getElementById('result').innerText = "❌ AI request failed.";
+      }
+    });
+
+    // Rule-based assignment
+    async function assignRuleBased() {
+      const task = {
+        title: document.getElementById('title').value,
+        skills: document.getElementById('skills').value,
+        priority: document.getElementById('priority').value
+      };
+
+      document.getElementById('result').innerHTML = "⏳ Thinking (rule-based)...";
+
+      try {
+        const response = await fetch('http://localhost:5000/assign-rule-based', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(task)
+        });
+
+        const result = await response.json();
+        document.getElementById('result').innerHTML = `
+          <strong>Rule-Based Recommendation:</strong>
+          <div>${result.recommendation || '⚠️ No recommendation received'}</div>`;
+      } catch (err) {
+        console.error("❌ Rule-Based Request failed:", err);
+        document.getElementById('result').innerText = "❌ Rule-based request failed.";
+      }
+    }
+  </script>
+</body>
+</html>
